@@ -1,0 +1,106 @@
+// Prisma Schema untuk Aplikasi Kasir
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  CASHIER
+}
+
+enum PaymentMethod {
+  CASH
+  DEBIT
+  CREDIT
+  EWALLET
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role      @default(CASHIER)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  cost        Float     @default(0) // Harga beli/modal untuk profit calculation
+  stock       Int       @default(0)
+  barcode     String?   @unique
+  image       String?
+  isActive    Boolean   @default(true)
+  categoryId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  category         Category          @relation(fields: [categoryId], references: [id])
+  transactionItems TransactionItem[]
+
+  @@index([categoryId])
+  @@index([barcode])
+  @@map("products")
+}
+
+model Transaction {
+  id            String        @id @default(uuid())
+  invoiceNumber String        @unique
+  total         Float
+  paymentMethod PaymentMethod
+  paymentAmount Float         // Jumlah uang yang dibayar
+  changeAmount  Float         // Kembalian
+  userId        String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user  User              @relation(fields: [userId], references: [id])
+  items TransactionItem[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([invoiceNumber])
+  @@map("transactions")
+}
+
+model TransactionItem {
+  id            String  @id @default(uuid())
+  transactionId String
+  productId     String
+  quantity      Int
+  unitPrice     Float   // Harga satuan saat transaksi
+  subtotal      Float   // quantity * unitPrice
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id])
+
+  @@index([transactionId])
+  @@index([productId])
+  @@map("transaction_items")
+}
