@@ -1,36 +1,59 @@
 {
+  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],
-    "outDir": "./dist",
+    // File Layout
     "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "node",
+    "outDir": "./dist",
+
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    "module": "ESNext",
+    "target": "ES2022",
+    // "types": [],
+    // For nodejs:
+    "lib": ["esnext"],
+    "types": ["node"],
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    // and npm install -D @types/node
+
+    "paths": {
+      "@/*": ["src/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@services/*": ["src/services/*"],
+      "@repositories/*": ["src/repositories/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@utils/*": ["src/utils/*"],
+      "@config/*": ["src/config/*"],
+      "@types/*": ["src/types/*"],
+      "@validators/*": ["src/validators/*"]
+    },
+    // Other Outputs
+    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false, // ganti jadi false
+
+    // Style Options
+    // "noImplicitReturns": true,
+    // "noImplicitOverride": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./src",
-    "paths": {
-      "@/*": ["*"],
-      "@controllers/*": ["controllers/*"],
-      "@services/*": ["services/*"],
-      "@repositories/*": ["repositories/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@utils/*": ["utils/*"],
-      "@config/*": ["config/*"],
-      "@types/*": ["types/*"],
-      "@validators/*": ["validators/*"]
-    }
+    // "noFallthroughCasesInSwitch": true,
+    // "noPropertyAccessFromIndexSignature": true,
+
+    // Recommended Options
+    "strict": true, // ganti jadi false
+    "verbatimModuleSyntax": false,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

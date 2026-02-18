@@ -1,0 +1,100 @@
+
+> kasir-be@1.0.0 build
+> tsc && ts-add-js-extension --dir=dist
+
+src/app.ts(1,19): error TS1484: 'Application' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/app.ts(4,29): error TS2307: Cannot find module '@/config/swagger' or its corresponding type declarations.
+src/app.ts(5,33): error TS2307: Cannot find module '@/middlewares/error.middleware' or its corresponding type declarations.
+src/app.ts(8,24): error TS2307: Cannot find module '@/routes/auth.routes' or its corresponding type declarations.
+src/app.ts(9,28): error TS2307: Cannot find module '@/routes/category.routes' or its corresponding type declarations.
+src/app.ts(10,27): error TS2307: Cannot find module '@/routes/product.routes' or its corresponding type declarations.
+src/app.ts(11,31): error TS2307: Cannot find module '@/routes/transaction.routes' or its corresponding type declarations.
+src/app.ts(12,30): error TS2307: Cannot find module '@/routes/statistics.routes' or its corresponding type declarations.
+src/controllers/auth.controller.ts(1,10): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/auth.controller.ts(1,20): error TS1484: 'NextFunction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/auth.controller.ts(2,29): error TS2307: Cannot find module '@/services/auth.service' or its corresponding type declarations.
+src/controllers/auth.controller.ts(3,30): error TS2307: Cannot find module '@/utils/response' or its corresponding type declarations.
+src/controllers/auth.controller.ts(4,29): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/controllers/category.controller.ts(1,10): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/category.controller.ts(1,20): error TS1484: 'NextFunction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/category.controller.ts(2,33): error TS2307: Cannot find module '@/services/category.service' or its corresponding type declarations.
+src/controllers/category.controller.ts(3,30): error TS2307: Cannot find module '@/utils/response' or its corresponding type declarations.
+src/controllers/category.controller.ts(4,29): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/controllers/product.controller.ts(1,10): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/product.controller.ts(1,20): error TS1484: 'NextFunction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/product.controller.ts(2,32): error TS2307: Cannot find module '@/services/product.service' or its corresponding type declarations.
+src/controllers/product.controller.ts(3,30): error TS2307: Cannot find module '@/utils/response' or its corresponding type declarations.
+src/controllers/product.controller.ts(4,29): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/controllers/statistics.controller.ts(1,10): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/statistics.controller.ts(1,20): error TS1484: 'NextFunction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/statistics.controller.ts(2,35): error TS2307: Cannot find module '@/services/statistics.service' or its corresponding type declarations.
+src/controllers/statistics.controller.ts(3,30): error TS2307: Cannot find module '@/utils/response' or its corresponding type declarations.
+src/controllers/statistics.controller.ts(4,29): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/controllers/transaction.controller.ts(1,10): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/transaction.controller.ts(1,20): error TS1484: 'NextFunction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/controllers/transaction.controller.ts(2,36): error TS2307: Cannot find module '@/services/transaction.service' or its corresponding type declarations.
+src/controllers/transaction.controller.ts(3,30): error TS2307: Cannot find module '@/utils/response' or its corresponding type declarations.
+src/controllers/transaction.controller.ts(4,29): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/middlewares/auth.middleware.ts(1,10): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/auth.middleware.ts(1,20): error TS1484: 'NextFunction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/auth.middleware.ts(2,25): error TS2307: Cannot find module '@/utils/jwt' or its corresponding type declarations.
+src/middlewares/auth.middleware.ts(3,30): error TS2307: Cannot find module '@/utils/response' or its corresponding type declarations.
+src/middlewares/auth.middleware.ts(4,29): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/middlewares/error.middleware.ts(1,10): error TS1484: 'Request' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/error.middleware.ts(1,19): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/error.middleware.ts(1,29): error TS1484: 'NextFunction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/error.middleware.ts(2,30): error TS2307: Cannot find module '@/utils/response' or its corresponding type declarations.
+src/middlewares/validation.middleware.ts(1,10): error TS1484: 'Request' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/validation.middleware.ts(1,19): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/validation.middleware.ts(1,29): error TS1484: 'NextFunction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/validation.middleware.ts(2,10): error TS1484: 'AnyZodObject' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/middlewares/validation.middleware.ts(3,30): error TS2307: Cannot find module '@/utils/response' or its corresponding type declarations.
+src/repositories/category.repository.ts(1,24): error TS2307: Cannot find module '@/config/database' or its corresponding type declarations.
+src/repositories/category.repository.ts(2,10): error TS1484: 'Category' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/product.repository.ts(1,24): error TS2307: Cannot find module '@/config/database' or its corresponding type declarations.
+src/repositories/product.repository.ts(2,10): error TS1484: 'Product' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/product.repository.ts(3,35): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/repositories/transaction.repository.ts(1,24): error TS2307: Cannot find module '@/config/database' or its corresponding type declarations.
+src/repositories/transaction.repository.ts(2,10): error TS1484: 'Transaction' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/repositories/transaction.repository.ts(3,35): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/repositories/transaction.repository.ts(128,39): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+src/repositories/transaction.repository.ts(260,36): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/repositories/transaction.repository.ts(274,24): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/repositories/transaction.repository.ts(275,38): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/repositories/user.repository.ts(1,24): error TS2307: Cannot find module '@/config/database' or its corresponding type declarations.
+src/repositories/user.repository.ts(2,10): error TS1484: 'User' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/routes/auth.routes.ts(2,32): error TS2307: Cannot find module '@/controllers/auth.controller' or its corresponding type declarations.
+src/routes/auth.routes.ts(3,26): error TS2307: Cannot find module '@/middlewares/validation.middleware' or its corresponding type declarations.
+src/routes/auth.routes.ts(4,41): error TS2307: Cannot find module '@/middlewares/auth.middleware' or its corresponding type declarations.
+src/routes/auth.routes.ts(5,45): error TS2307: Cannot find module '@/validators/auth.validator' or its corresponding type declarations.
+src/routes/category.routes.ts(2,36): error TS2307: Cannot find module '@/controllers/category.controller' or its corresponding type declarations.
+src/routes/category.routes.ts(3,26): error TS2307: Cannot find module '@/middlewares/validation.middleware' or its corresponding type declarations.
+src/routes/category.routes.ts(4,41): error TS2307: Cannot find module '@/middlewares/auth.middleware' or its corresponding type declarations.
+src/routes/category.routes.ts(9,8): error TS2307: Cannot find module '@/validators/category.validator' or its corresponding type declarations.
+src/routes/product.routes.ts(2,35): error TS2307: Cannot find module '@/controllers/product.controller' or its corresponding type declarations.
+src/routes/product.routes.ts(3,26): error TS2307: Cannot find module '@/middlewares/validation.middleware' or its corresponding type declarations.
+src/routes/product.routes.ts(4,41): error TS2307: Cannot find module '@/middlewares/auth.middleware' or its corresponding type declarations.
+src/routes/product.routes.ts(10,8): error TS2307: Cannot find module '@/validators/product.validator' or its corresponding type declarations.
+src/routes/statistics.routes.ts(2,38): error TS2307: Cannot find module '@/controllers/statistics.controller' or its corresponding type declarations.
+src/routes/statistics.routes.ts(3,30): error TS2307: Cannot find module '@/middlewares/auth.middleware' or its corresponding type declarations.
+src/routes/transaction.routes.ts(2,39): error TS2307: Cannot find module '@/controllers/transaction.controller' or its corresponding type declarations.
+src/routes/transaction.routes.ts(3,26): error TS2307: Cannot find module '@/middlewares/validation.middleware' or its corresponding type declarations.
+src/routes/transaction.routes.ts(4,30): error TS2307: Cannot find module '@/middlewares/auth.middleware' or its corresponding type declarations.
+src/routes/transaction.routes.ts(9,8): error TS2307: Cannot find module '@/validators/transaction.validator' or its corresponding type declarations.
+src/services/auth.service.ts(2,32): error TS2307: Cannot find module '@/repositories/user.repository' or its corresponding type declarations.
+src/services/auth.service.ts(3,25): error TS2307: Cannot find module '@/utils/jwt' or its corresponding type declarations.
+src/services/auth.service.ts(5,30): error TS2307: Cannot find module '@/middlewares/error.middleware' or its corresponding type declarations.
+src/services/category.service.ts(1,36): error TS2307: Cannot find module '@/repositories/category.repository' or its corresponding type declarations.
+src/services/category.service.ts(2,30): error TS2307: Cannot find module '@/middlewares/error.middleware' or its corresponding type declarations.
+src/services/product.service.ts(4,8): error TS2307: Cannot find module '@/repositories/product.repository' or its corresponding type declarations.
+src/services/product.service.ts(5,36): error TS2307: Cannot find module '@/repositories/category.repository' or its corresponding type declarations.
+src/services/product.service.ts(6,30): error TS2307: Cannot find module '@/middlewares/error.middleware' or its corresponding type declarations.
+src/services/statistics.service.ts(1,39): error TS2307: Cannot find module '@/repositories/transaction.repository' or its corresponding type declarations.
+src/services/statistics.service.ts(2,65): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/services/transaction.service.ts(4,8): error TS2307: Cannot find module '@/repositories/transaction.repository' or its corresponding type declarations.
+src/services/transaction.service.ts(5,35): error TS2307: Cannot find module '@/repositories/product.repository' or its corresponding type declarations.
+src/services/transaction.service.ts(6,30): error TS2307: Cannot find module '@/middlewares/error.middleware' or its corresponding type declarations.
+src/types/index.ts(1,10): error TS1484: 'Request' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/utils/jwt.ts(2,26): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
+src/utils/response.ts(1,10): error TS1484: 'Response' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/utils/response.ts(2,29): error TS2307: Cannot find module '@/types' or its corresponding type declarations.
