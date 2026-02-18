@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { ProductController } from "@/controllers/product.controller";
-import { validate } from "@/middlewares/validation.middleware";
-import { authenticate, authorize } from "@/middlewares/auth.middleware";
+import { ProductController } from "#/controllers/product.controller";
+import { validate } from "#/middlewares/validation.middleware";
+import { authenticate, authorize } from "#/middlewares/auth.middleware";
 import {
   createProductSchema,
   updateProductSchema,
   getProductSchema,
   listProductsSchema,
-} from "@/validators/product.validator";
+} from "#/validators/product.validator";
 import { Role } from "@prisma/client";
 
 const router = Router();

@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
-import { StatisticsService } from "@/services/statistics.service";
-import { ResponseUtil } from "@/utils/response";
-import { AuthRequest } from "@/types";
+import { StatisticsService } from "#/services/statistics.service";
+import { ResponseUtil } from "#/utils/response";
+import { AuthRequest } from "#/types";
 
 export class StatisticsController {
   private statisticsService: StatisticsService;

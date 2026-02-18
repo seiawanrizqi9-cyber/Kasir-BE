@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ResponseUtil } from "@/utils/response";
+import { ResponseUtil } from "#/utils/response";
 
 export class ErrorHandler extends Error {
   statusCode: number;

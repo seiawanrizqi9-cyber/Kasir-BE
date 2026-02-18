@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { CategoryController } from "@/controllers/category.controller";
-import { validate } from "@/middlewares/validation.middleware";
-import { authenticate, authorize } from "@/middlewares/auth.middleware";
+import { CategoryController } from "#/controllers/category.controller";
+import { validate } from "#/middlewares/validation.middleware";
+import { authenticate, authorize } from "#/middlewares/auth.middleware";
 import {
   createCategorySchema,
   updateCategorySchema,
   getCategorySchema,
-} from "@/validators/category.validator";
+} from "#/validators/category.validator";
 import { Role } from "@prisma/client";
 
 const router = Router();

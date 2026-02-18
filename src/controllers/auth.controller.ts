@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
-import { AuthService } from "@/services/auth.service";
-import { ResponseUtil } from "@/utils/response";
-import { AuthRequest } from "@/types";
+import { AuthService } from "#/services/auth.service";
+import { ResponseUtil } from "#/utils/response";
+import { AuthRequest } from "#/types";
 
 export class AuthController {
   private authService: AuthService;

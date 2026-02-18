@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import { UserRepository } from "@/repositories/user.repository";
-import { JwtUtil } from "@/utils/jwt";
+import { UserRepository } from "#/repositories/user.repository";
+import { JwtUtil } from "#/utils/jwt";
 import { Role } from "@prisma/client";
-import { ErrorHandler } from "@/middlewares/error.middleware";
+import { ErrorHandler } from "#/middlewares/error.middleware";
 
 export class AuthService {
   private userRepository: UserRepository;

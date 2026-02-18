@@ -1,6 +1,6 @@
-import { prisma } from "@/config/database";
+import { prisma } from "#/config/database";
 import { Product, Prisma } from "@prisma/client";
-import { PaginatedResponse } from "@/types";
+import { PaginatedResponse } from "#/types";
 
 export interface ProductFilters {
   page?: number;

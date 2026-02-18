@@ -1,5 +1,5 @@
-import { TransactionRepository } from "@/repositories/transaction.repository";
-import { DashboardStats, SalesReport, ProductPerformance } from "@/types";
+import { TransactionRepository } from "#/repositories/transaction.repository";
+import { DashboardStats, SalesReport, ProductPerformance } from "#/types";
 
 export class StatisticsService {
   private transactionRepository: TransactionRepository;

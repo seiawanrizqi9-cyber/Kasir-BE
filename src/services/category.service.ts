@@ -1,5 +1,5 @@
-import { CategoryRepository } from "@/repositories/category.repository";
-import { ErrorHandler } from "@/middlewares/error.middleware";
+import { CategoryRepository } from "#/repositories/category.repository";
+import { ErrorHandler } from "#/middlewares/error.middleware";
 
 export class CategoryService {
   private categoryRepository: CategoryRepository;

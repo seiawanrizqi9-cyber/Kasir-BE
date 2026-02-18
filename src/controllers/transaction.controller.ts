@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
-import { TransactionService } from "@/services/transaction.service";
-import { ResponseUtil } from "@/utils/response";
-import { AuthRequest } from "@/types";
+import { TransactionService } from "#/services/transaction.service";
+import { ResponseUtil } from "#/utils/response";
+import { AuthRequest } from "#/types";
 import { PaymentMethod } from "@prisma/client";
 
 export class TransactionController {

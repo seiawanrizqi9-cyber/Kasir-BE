@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
-import { JwtUtil } from "@/utils/jwt";
-import { ResponseUtil } from "@/utils/response";
-import { AuthRequest } from "@/types";
+import { JwtUtil } from "#/utils/jwt";
+import { ResponseUtil } from "#/utils/response";
+import { AuthRequest } from "#/types";
 import { Role } from "@prisma/client";
 
 export const authenticate = async (

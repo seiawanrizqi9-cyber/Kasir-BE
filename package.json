@@ -17,6 +17,9 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "imports": {
+    "#*": "./dist/*"
+  },
   "dependencies": {
     "@prisma/client": "7.4.0",
     "bcrypt": "^5.1.1",

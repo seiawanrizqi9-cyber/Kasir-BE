@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
-import { ProductService } from "@/services/product.service";
-import { ResponseUtil } from "@/utils/response";
-import { AuthRequest } from "@/types";
+import { ProductService } from "#/services/product.service";
+import { ResponseUtil } from "#/utils/response";
+import { AuthRequest } from "#/types";
 
 export class ProductController {
   private productService: ProductService;

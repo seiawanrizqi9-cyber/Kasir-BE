@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { TransactionController } from "@/controllers/transaction.controller";
-import { validate } from "@/middlewares/validation.middleware";
-import { authenticate } from "@/middlewares/auth.middleware";
+import { TransactionController } from "#/controllers/transaction.controller";
+import { validate } from "#/middlewares/validation.middleware";
+import { authenticate } from "#/middlewares/auth.middleware";
 import {
   createTransactionSchema,
   getTransactionSchema,
   listTransactionsSchema,
-} from "@/validators/transaction.validator";
+} from "#/validators/transaction.validator";
 
 const router = Router();
 const transactionController = new TransactionController();

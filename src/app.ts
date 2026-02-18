@@ -1,15 +1,15 @@
 import express, { Application } from "express";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "@/config/swagger";
-import { errorMiddleware } from "@/middlewares/error.middleware";
+import { swaggerSpec } from "#/config/swagger";
+import { errorMiddleware } from "#/middlewares/error.middleware";
 
 // Import routes
-import authRoutes from "@/routes/auth.routes";
-import categoryRoutes from "@/routes/category.routes";
-import productRoutes from "@/routes/product.routes";
-import transactionRoutes from "@/routes/transaction.routes";
-import statisticsRoutes from "@/routes/statistics.routes";
+import authRoutes from "#/routes/auth.routes";
+import categoryRoutes from "#/routes/category.routes";
+import productRoutes from "#/routes/product.routes";
+import transactionRoutes from "#/routes/transaction.routes";
+import statisticsRoutes from "#/routes/statistics.routes";
 
 const app: Application = express();
 

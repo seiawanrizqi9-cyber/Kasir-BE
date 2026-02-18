@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
-import { CategoryService } from "@/services/category.service";
-import { ResponseUtil } from "@/utils/response";
-import { AuthRequest } from "@/types";
+import { CategoryService } from "#/services/category.service";
+import { ResponseUtil } from "#/utils/response";
+import { AuthRequest } from "#/types";
 
 export class CategoryController {
   private categoryService: CategoryService;
