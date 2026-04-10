@@ -7,7 +7,7 @@ const options: swaggerJsdoc.Options = {
       title: "Kasir API Documentation",
       version: "1.0.0",
       description:
-        "API documentation untuk aplikasi kasir (POS System) dengan TypeScript, Prisma, dan PostgreSQL",
+        "API untuk aplikasi kasir pribadi — cukup pakai nomor seri untuk cari barang dan hitung total harga.",
       contact: {
         name: "API Support",
       },
@@ -19,14 +19,6 @@ const options: swaggerJsdoc.Options = {
       },
     ],
     components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-          description: "Enter your JWT token",
-        },
-      },
       schemas: {
         Error: {
           type: "object",
@@ -46,11 +38,6 @@ const options: swaggerJsdoc.Options = {
         },
       },
     },
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
   },
   apis: ["./src/routes/*.ts", "./src/controllers/*.ts"],
 };

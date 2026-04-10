@@ -1,7 +1,6 @@
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { CategoryService } from "#/services/category.service";
 import { ResponseUtil } from "#/utils/response";
-import { AuthRequest } from "#/types";
 
 export class CategoryController {
   private categoryService: CategoryService;
@@ -15,21 +14,15 @@ export class CategoryController {
    * /api/categories:
    *   get:
    *     tags: [Categories]
-   *     summary: Get all categories
-   *     security:
-   *       - bearerAuth: []
+   *     summary: Ambil semua kategori
    *     responses:
    *       200:
-   *         description: List of categories
+   *         description: Daftar kategori
    */
-  getAll = async (_req: AuthRequest, res: Response, next: NextFunction) => {
+  getAll = async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const categories = await this.categoryService.getAllCategories();
-      return ResponseUtil.success(
-        res,
-        "Categories retrieved successfully",
-        categories,
-      );
+      return ResponseUtil.success(res, "Kategori berhasil diambil", categories);
     } catch (error) {
       return next(error);
     }
@@ -40,9 +33,7 @@ export class CategoryController {
    * /api/categories/{id}:
    *   get:
    *     tags: [Categories]
-   *     summary: Get category by ID
-   *     security:
-   *       - bearerAuth: []
+   *     summary: Ambil kategori berdasarkan ID
    *     parameters:
    *       - in: path
    *         name: id
@@ -51,19 +42,16 @@ export class CategoryController {
    *           type: string
    *     responses:
    *       200:
-   *         description: Category details
+   *         description: Detail kategori
    *       404:
-   *         description: Category not found
+   *         description: Kategori tidak ditemukan
    */
-  getById = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const id = req.params.id as string;
-      const category = await this.categoryService.getCategoryById(id);
-      return ResponseUtil.success(
-        res,
-        "Category retrieved successfully",
-        category,
+      const category = await this.categoryService.getCategoryById(
+        req.params["id"] as string,
       );
+      return ResponseUtil.success(res, "Kategori berhasil diambil", category);
     } catch (error) {
       return next(error);
     }
@@ -74,9 +62,7 @@ export class CategoryController {
    * /api/categories:
    *   post:
    *     tags: [Categories]
-   *     summary: Create new category (Admin only)
-   *     security:
-   *       - bearerAuth: []
+   *     summary: Tambah kategori baru
    *     requestBody:
    *       required: true
    *       content:
@@ -92,16 +78,16 @@ export class CategoryController {
    *                 type: string
    *     responses:
    *       201:
-   *         description: Category created
-   *       400:
-   *         description: Name already exists
+   *         description: Kategori berhasil ditambahkan
    */
-  create = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const category = await this.categoryService.createCategory(req.body);
+      const category = await this.categoryService.createCategory(
+        req.body as { name: string; description?: string },
+      );
       return ResponseUtil.created(
         res,
-        "Category created successfully",
+        "Kategori berhasil ditambahkan",
         category,
       );
     } catch (error) {
@@ -114,9 +100,7 @@ export class CategoryController {
    * /api/categories/{id}:
    *   put:
    *     tags: [Categories]
-   *     summary: Update category (Admin only)
-   *     security:
-   *       - bearerAuth: []
+   *     summary: Update kategori
    *     parameters:
    *       - in: path
    *         name: id
@@ -135,19 +119,15 @@ export class CategoryController {
    *                 type: string
    *     responses:
    *       200:
-   *         description: Category updated
-   *       404:
-   *         description: Category not found
+   *         description: Kategori berhasil diupdate
    */
-  update = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const id = req.params.id as string;
-      const category = await this.categoryService.updateCategory(id, req.body);
-      return ResponseUtil.success(
-        res,
-        "Category updated successfully",
-        category,
+      const category = await this.categoryService.updateCategory(
+        req.params["id"] as string,
+        req.body as { name?: string; description?: string },
       );
+      return ResponseUtil.success(res, "Kategori berhasil diupdate", category);
     } catch (error) {
       return next(error);
     }
@@ -158,9 +138,7 @@ export class CategoryController {
    * /api/categories/{id}:
    *   delete:
    *     tags: [Categories]
-   *     summary: Delete category (Admin only)
-   *     security:
-   *       - bearerAuth: []
+   *     summary: Hapus kategori
    *     parameters:
    *       - in: path
    *         name: id
@@ -169,17 +147,12 @@ export class CategoryController {
    *           type: string
    *     responses:
    *       200:
-   *         description: Category deleted
-   *       400:
-   *         description: Category has products
-   *       404:
-   *         description: Category not found
+   *         description: Kategori berhasil dihapus
    */
-  delete = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const id = req.params.id as string;
-      await this.categoryService.deleteCategory(id);
-      return ResponseUtil.success(res, "Category deleted successfully");
+      await this.categoryService.deleteCategory(req.params["id"] as string);
+      return ResponseUtil.success(res, "Kategori berhasil dihapus");
     } catch (error) {
       return next(error);
     }

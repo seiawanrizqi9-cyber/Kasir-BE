@@ -5,11 +5,8 @@ import { swaggerSpec } from "#/config/swagger";
 import { errorMiddleware } from "#/middlewares/error.middleware";
 
 // Import routes
-import authRoutes from "#/routes/auth.routes";
 import categoryRoutes from "#/routes/category.routes";
 import productRoutes from "#/routes/product.routes";
-import transactionRoutes from "#/routes/transaction.routes";
-import statisticsRoutes from "#/routes/statistics.routes";
 
 const app: Application = express();
 
@@ -39,17 +36,14 @@ app.use(
 );
 
 // API Routes
-app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/transactions", transactionRoutes);
-app.use("/api/statistics", statisticsRoutes);
 
 // 404 handler
 app.use((_req, res) => {
   res.status(404).json({
     success: false,
-    message: "Route not found",
+    message: "Route tidak ditemukan",
   });
 });
 

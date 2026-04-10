@@ -21,33 +21,41 @@ export class ProductService {
   async getProductById(id: string) {
     const product = await this.productRepository.findById(id);
     if (!product) {
-      throw new ErrorHandler("Product not found", 404);
+      throw new ErrorHandler("Produk tidak ditemukan", 404);
+    }
+    return product;
+  }
+
+  async getProductBySerialNumber(serialNumber: string) {
+    const product =
+      await this.productRepository.findBySerialNumber(serialNumber);
+    if (!product) {
+      throw new ErrorHandler(
+        `Produk dengan nomor seri "${serialNumber}" tidak ditemukan`,
+        404,
+      );
     }
     return product;
   }
 
   async createProduct(data: {
     name: string;
-    description?: string;
+    serialNumber: string;
     price: number;
-    cost?: number;
-    stock?: number;
-    barcode?: string;
-    image?: string;
     categoryId: string;
   }) {
-    // Validate category exists
+    // Validasi kategori ada
     const category = await this.categoryRepository.findById(data.categoryId);
     if (!category) {
-      throw new ErrorHandler("Category not found", 404);
+      throw new ErrorHandler("Kategori tidak ditemukan", 404);
     }
 
-    // Check if barcode already exists
-    if (data.barcode) {
-      const existing = await this.productRepository.findByBarcode(data.barcode);
-      if (existing) {
-        throw new ErrorHandler("Barcode already exists", 400);
-      }
+    // Cek duplikasi nomor seri
+    const existing = await this.productRepository.findBySerialNumber(
+      data.serialNumber,
+    );
+    if (existing) {
+      throw new ErrorHandler("Nomor seri sudah digunakan produk lain", 400);
     }
 
     return this.productRepository.create(data);
@@ -57,35 +65,29 @@ export class ProductService {
     id: string,
     data: {
       name?: string;
-      description?: string;
+      serialNumber?: string;
       price?: number;
-      cost?: number;
-      stock?: number;
-      barcode?: string;
-      image?: string;
       categoryId?: string;
-      isActive?: boolean;
     },
   ) {
-    // Check if product exists
     const product = await this.productRepository.findById(id);
     if (!product) {
-      throw new ErrorHandler("Product not found", 404);
+      throw new ErrorHandler("Produk tidak ditemukan", 404);
     }
 
-    // Validate category if provided
     if (data.categoryId) {
       const category = await this.categoryRepository.findById(data.categoryId);
       if (!category) {
-        throw new ErrorHandler("Category not found", 404);
+        throw new ErrorHandler("Kategori tidak ditemukan", 404);
       }
     }
 
-    // Check if barcode is unique
-    if (data.barcode && data.barcode !== product.barcode) {
-      const existing = await this.productRepository.findByBarcode(data.barcode);
+    if (data.serialNumber && data.serialNumber !== product.serialNumber) {
+      const existing = await this.productRepository.findBySerialNumber(
+        data.serialNumber,
+      );
       if (existing) {
-        throw new ErrorHandler("Barcode already exists", 400);
+        throw new ErrorHandler("Nomor seri sudah digunakan produk lain", 400);
       }
     }
 
@@ -95,10 +97,61 @@ export class ProductService {
   async deleteProduct(id: string) {
     const product = await this.productRepository.findById(id);
     if (!product) {
-      throw new ErrorHandler("Product not found", 404);
+      throw new ErrorHandler("Produk tidak ditemukan", 404);
+    }
+    return this.productRepository.delete(id);
+  }
+
+  /**
+   * Hitung total harga dari daftar nomor seri + jumlah masing-masing.
+   * Mengembalikan detail tiap item dan grand total.
+   */
+  async calculateTotal(
+    items: Array<{ serialNumber: string; qty: number }>,
+  ): Promise<{
+    items: Array<{
+      serialNumber: string;
+      name: string;
+      category: string;
+      price: number;
+      qty: number;
+      subtotal: number;
+    }>;
+    grandTotal: number;
+  }> {
+    const result = [];
+    let grandTotal = 0;
+
+    for (const item of items) {
+      const product = await this.productRepository.findBySerialNumber(
+        item.serialNumber,
+      );
+      if (!product) {
+        throw new ErrorHandler(
+          `Produk dengan nomor seri "${item.serialNumber}" tidak ditemukan`,
+          404,
+        );
+      }
+      if (item.qty < 1) {
+        throw new ErrorHandler(
+          `Jumlah untuk "${item.serialNumber}" harus minimal 1`,
+          400,
+        );
+      }
+
+      const subtotal = product.price * item.qty;
+      grandTotal += subtotal;
+
+      result.push({
+        serialNumber: product.serialNumber,
+        name: product.name,
+        category: product.category.name,
+        price: product.price,
+        qty: item.qty,
+        subtotal,
+      });
     }
 
-    // Soft delete
-    return this.productRepository.delete(id);
+    return { items: result, grandTotal };
   }
 }

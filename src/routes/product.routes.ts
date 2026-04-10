@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { ProductController } from "#/controllers/product.controller";
 import { validate } from "#/middlewares/validation.middleware";
-import { authenticate, authorize } from "#/middlewares/auth.middleware";
 import {
   createProductSchema,
   updateProductSchema,
   getProductSchema,
+  getBySerialSchema,
   listProductsSchema,
+  calculateSchema,
 } from "#/validators/product.validator";
-import { Role } from "@prisma/client";
 
 const router = Router();
 const productController = new ProductController();
@@ -17,35 +17,36 @@ const productController = new ProductController();
  * @swagger
  * tags:
  *   name: Products
- *   description: Product management endpoints
+ *   description: Manajemen produk kasir
  */
 
-// All routes require authentication
-router.use(authenticate);
-
+// Ambil semua produk
 router.get("/", validate(listProductsSchema), productController.getAll);
+
+// Hitung total harga otomatis (harus sebelum /:id agar tidak konflik)
+router.post(
+  "/calculate",
+  validate(calculateSchema),
+  productController.calculate,
+);
+
+// Cari produk berdasarkan nomor seri
+router.get(
+  "/serial/:serialNumber",
+  validate(getBySerialSchema),
+  productController.getBySerialNumber,
+);
+
+// Ambil produk berdasarkan ID
 router.get("/:id", validate(getProductSchema), productController.getById);
 
-// Admin only routes
-router.post(
-  "/",
-  authorize([Role.ADMIN]),
-  validate(createProductSchema),
-  productController.create,
-);
+// Tambah produk baru
+router.post("/", validate(createProductSchema), productController.create);
 
-router.put(
-  "/:id",
-  authorize([Role.ADMIN]),
-  validate(updateProductSchema),
-  productController.update,
-);
+// Update produk
+router.put("/:id", validate(updateProductSchema), productController.update);
 
-router.delete(
-  "/:id",
-  authorize([Role.ADMIN]),
-  validate(getProductSchema),
-  productController.delete,
-);
+// Hapus produk
+router.delete("/:id", validate(getProductSchema), productController.delete);
 
 export default router;
