@@ -9,9 +9,13 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma generate && prisma migrate dev",
     "prisma:reset": "prisma migrate reset",
-    "seed": "tsx src/prisma/seeder.ts",
+    "seed": "tsx src/prisma/seed.ts",
+    "prisma:seed": "prisma db seed",
     "dev": "tsx watch src/index.ts",
     "postinstall": "prisma generate"
+  },
+  "prisma": {
+    "seed": "tsx src/prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
