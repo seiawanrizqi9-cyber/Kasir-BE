@@ -1,8 +1,8 @@
 import {
   ProductRepository,
   ProductFilters,
-} from "#/repositories/product.repository";
-import { CategoryRepository } from "#/repositories/category.repository";
+} from "#/modules/product/product.repository";
+import { CategoryRepository } from "#/modules/category/category.repository";
 import { ErrorHandler } from "#/middlewares/error.middleware";
 
 export class ProductService {

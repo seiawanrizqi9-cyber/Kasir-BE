@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ProductService } from "#/services/product.service";
+import { ProductService } from "#/modules/product/product.service";
 import { ResponseUtil } from "#/utils/response";
 
 export class ProductController {

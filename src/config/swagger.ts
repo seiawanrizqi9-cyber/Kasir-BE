@@ -40,10 +40,10 @@ const options: swaggerJsdoc.Options = {
     },
   },
   apis: [
-    "./src/routes/category.routes.ts",
-    "./src/routes/product.routes.ts",
-    "./src/controllers/category.controller.ts",
-    "./src/controllers/product.controller.ts",
+    "./src/modules/category/category.routes.ts",
+    "./src/modules/product/product.routes.ts",
+    "./src/modules/category/category.controller.ts",
+    "./src/modules/product/product.controller.ts",
   ],
 };
 

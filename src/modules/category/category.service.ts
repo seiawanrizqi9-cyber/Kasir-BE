@@ -1,4 +1,4 @@
-import { CategoryRepository } from "#/repositories/category.repository";
+import { CategoryRepository } from "#/modules/category/category.repository";
 import { ErrorHandler } from "#/middlewares/error.middleware";
 
 export class CategoryService {

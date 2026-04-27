@@ -5,8 +5,8 @@ import { swaggerSpec } from "#/config/swagger";
 import { errorMiddleware } from "#/middlewares/error.middleware";
 
 // Import routes
-import categoryRoutes from "#/routes/category.routes";
-import productRoutes from "#/routes/product.routes";
+import categoryRoutes from "#/modules/category/category.routes";
+import productRoutes from "#/modules/product/product.routes";
 
 const app: Application = express();
 

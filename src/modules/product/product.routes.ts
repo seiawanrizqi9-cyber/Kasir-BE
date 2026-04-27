@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ProductController } from "#/controllers/product.controller";
+import { ProductController } from "#/modules/product/product.controller";
 import { validate } from "#/middlewares/validation.middleware";
 import {
   createProductSchema,
@@ -8,7 +8,7 @@ import {
   getBySerialSchema,
   listProductsSchema,
   calculateSchema,
-} from "#/validators/product.validator";
+} from "#/modules/product/product.validator";
 
 const router = Router();
 const productController = new ProductController();
