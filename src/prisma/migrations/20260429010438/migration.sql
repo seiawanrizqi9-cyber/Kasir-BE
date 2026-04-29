@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "CodeType" AS ENUM ('INTERNAL', 'BARCODE');
+
 -- CreateTable
 CREATE TABLE "categories" (
     "id" TEXT NOT NULL,
@@ -13,8 +16,9 @@ CREATE TABLE "categories" (
 CREATE TABLE "products" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "serialNumber" TEXT NOT NULL,
-    "price" DOUBLE PRECISION NOT NULL,
+    "code" TEXT NOT NULL,
+    "codeType" "CodeType" NOT NULL,
+    "price" INTEGER NOT NULL,
     "categoryId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -26,13 +30,13 @@ CREATE TABLE "products" (
 CREATE UNIQUE INDEX "categories_name_key" ON "categories"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "products_serialNumber_key" ON "products"("serialNumber");
+CREATE UNIQUE INDEX "products_name_key" ON "products"("name");
 
 -- CreateIndex
-CREATE INDEX "products_categoryId_idx" ON "products"("categoryId");
+CREATE UNIQUE INDEX "products_code_key" ON "products"("code");
 
 -- CreateIndex
-CREATE INDEX "products_serialNumber_idx" ON "products"("serialNumber");
+CREATE INDEX "products_code_idx" ON "products"("code");
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

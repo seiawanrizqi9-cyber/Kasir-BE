@@ -22,17 +22,22 @@ model Category {
 }
 
 model Product {
-  id           String   @id @default(uuid())
-  name         String
-  serialNumber String   @unique
-  price        Float
+  id           String    @id @default(uuid())
+  name         String    @unique
+  code         String    @unique
+  codeType     CodeType
+  price        Int
   categoryId   String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   category Category @relation(fields: [categoryId], references: [id])
 
-  @@index([categoryId])
-  @@index([serialNumber])
+  @@index([code])
   @@map("products")
+}
+
+enum CodeType {
+  INTERNAL
+  BARCODE
 }

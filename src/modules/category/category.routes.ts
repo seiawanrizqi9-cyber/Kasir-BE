@@ -26,6 +26,17 @@ const categoryController = new CategoryController();
  *     responses:
  *       200:
  *         description: Daftar kategori
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean }
+ *                 message: { type: string }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Category'
  */
 router.get("/", categoryController.getAll);
 
@@ -41,9 +52,14 @@ router.get("/", categoryController.getAll);
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *     responses:
  *       200:
  *         description: Detail kategori
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessResponse'
  *       404:
  *         description: Kategori tidak ditemukan
  */
@@ -86,6 +102,7 @@ router.post("/", validate(createCategorySchema), categoryController.create);
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *     requestBody:
  *       content:
  *         application/json:
@@ -114,6 +131,7 @@ router.put("/:id", validate(updateCategorySchema), categoryController.update);
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *     responses:
  *       200:
  *         description: Kategori berhasil dihapus

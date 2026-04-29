@@ -11,12 +11,7 @@ import productRoutes from "#/modules/product/product.routes";
 const app: Application = express();
 
 // Middlewares
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN || "*",
-    credentials: true,
-  }),
-);
+app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

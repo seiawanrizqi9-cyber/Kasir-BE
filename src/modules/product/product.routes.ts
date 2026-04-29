@@ -45,9 +45,21 @@ const productController = new ProductController();
  *         name: categoryId
  *         schema:
  *           type: string
+ *           format: uuid
  *     responses:
  *       200:
  *         description: Daftar produk berhasil diambil
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean }
+ *                 message: { type: string }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
  */
 router.get("/", validate(listProductsSchema), productController.getAll);
 
@@ -127,6 +139,7 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *     responses:
  *       200:
  *         description: Detail produk
@@ -161,6 +174,7 @@ router.get("/:id", validate(getProductSchema), productController.getById);
  *                 type: number
  *               categoryId:
  *                 type: string
+ *                 format: uuid
  *     responses:
  *       201:
  *         description: Produk berhasil ditambahkan
@@ -179,6 +193,7 @@ router.post("/", validate(createProductSchema), productController.create);
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *     requestBody:
  *       content:
  *         application/json:
@@ -193,6 +208,7 @@ router.post("/", validate(createProductSchema), productController.create);
  *                 type: number
  *               categoryId:
  *                 type: string
+ *                 format: uuid
  *     responses:
  *       200:
  *         description: Produk berhasil diupdate
@@ -211,6 +227,7 @@ router.put("/:id", validate(updateProductSchema), productController.update);
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *     responses:
  *       200:
  *         description: Produk berhasil dihapus
