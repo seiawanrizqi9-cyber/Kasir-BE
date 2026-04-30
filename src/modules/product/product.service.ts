@@ -1,79 +1,138 @@
-import { ErrorHandler } from "#middlewares/error.middleware";
-import { ProductRepository } from "./product.repository";
+import { ProductRepository, ProductFilters } from "./product.repository";
 import { CategoryRepository } from "../category/category.repository";
-import { CodeType } from "@prisma/client";
+import { ErrorHandler } from "#/middlewares/error.middleware";
 
 export class ProductService {
-  private productRepository = new ProductRepository();
-  private categoryRepository = new CategoryRepository();
+  private productRepository: ProductRepository;
+  private categoryRepository: CategoryRepository;
 
+  constructor() {
+    this.productRepository = new ProductRepository();
+    this.categoryRepository = new CategoryRepository();
+  }
+
+  async getAllProducts(filters: ProductFilters) {
+    return this.productRepository.findAll(filters);
+  }
+
+  async getProductById(id: string) {
+    const product = await this.productRepository.findById(id);
+    if (!product) {
+      throw new ErrorHandler("Produk tidak ditemukan", 404);
+    }
+    return product;
+  }
+
+  // 🔥 FIXED
   async getProductByCode(code: string) {
     const product = await this.productRepository.findByCode(code);
-
     if (!product) {
       throw new ErrorHandler(
-        `Product dengan kode "${code}" tidak ditemukan`,
+        `Produk dengan code "${code}" tidak ditemukan`,
         404,
-        "NOT_FOUND"
       );
     }
-
     return product;
   }
 
   async createProduct(data: {
     name: string;
     code: string;
-    codeType: CodeType;
-    categoryId: string;
+    codeType: "INTERNAL" | "BARCODE";
     price: number;
+    categoryId: string;
   }) {
-    
-    const category = await this.categoryRepository.findById(data.categoryId)
+    // cek kategori
+    const category = await this.categoryRepository.findById(data.categoryId);
     if (!category) {
-      throw new ErrorHandler("Kategori tidak ditemukan", 404, "NOT_FOUND")
+      throw new ErrorHandler("Kategori tidak ditemukan", 404);
     }
 
-    const existing = await this.productRepository.findByCode(data.code)
+    // cek duplikat code
+    const existing = await this.productRepository.findByCode(data.code);
     if (existing) {
-      throw new ErrorHandler(`Produk dengan kode ${data.code} sudah ada`, 400, "BAD_REQUEST")
+      throw new ErrorHandler("Code sudah digunakan produk lain", 400);
     }
 
-    return this.productRepository.create(data)
+    return this.productRepository.create(data);
   }
 
-  async calculateTotal(
-    items: Array<{code: string, quantity: number}>
+  async updateProduct(
+    id: string,
+    data: {
+      name?: string;
+      code?: string;
+      codeType?: "INTERNAL" | "BARCODE";
+      price?: number;
+      categoryId?: string;
+    },
   ) {
-    const result = []
+    const product = await this.productRepository.findById(id);
+    if (!product) {
+      throw new ErrorHandler("Produk tidak ditemukan", 404);
+    }
+
+    if (data.categoryId) {
+      const category = await this.categoryRepository.findById(data.categoryId);
+      if (!category) {
+        throw new ErrorHandler("Kategori tidak ditemukan", 404);
+      }
+    }
+
+    // cek duplikat code saat update
+    if (data.code && data.code !== product.code) {
+      const existing = await this.productRepository.findByCode(data.code);
+      if (existing) {
+        throw new ErrorHandler("Code sudah digunakan produk lain", 400);
+      }
+    }
+
+    return this.productRepository.update(id, data);
+  }
+
+  async deleteProduct(id: string) {
+    const product = await this.productRepository.findById(id);
+    if (!product) {
+      throw new ErrorHandler("Produk tidak ditemukan", 404);
+    }
+    return this.productRepository.delete(id);
+  }
+
+  // 🔥 CORE KASIR
+  async calculateTotal(items: Array<{ code: string; qty: number }>) {
+    const result = [];
     let grandTotal = 0;
 
     for (const item of items) {
-      const product = await this.productRepository.findByCode(item.code)
+      const product = await this.productRepository.findByCode(item.code);
 
-      if(!product) {
-        throw new ErrorHandler(`Produk dengan kode ${item.code} tidak ditemukan`, 404, "NOT_FOUND")
+      if (!product) {
+        throw new ErrorHandler(
+          `Produk dengan code "${item.code}" tidak ditemukan`,
+          404,
+        );
       }
 
-      if (item.quantity < 1) {
-        throw new ErrorHandler(`Jumlah quantity untuk produk ${item.code} minimal 1`, 400, "BAD_REQUEST")
+      if (item.qty < 1) {
+        throw new ErrorHandler(`Qty untuk "${item.code}" minimal 1`, 400);
       }
 
-      const subTotal = product.price * item.quantity
-      grandTotal += subTotal
+      const subtotal = product.price * item.qty;
+      grandTotal += subtotal;
 
       result.push({
         code: product.code,
         name: product.name,
+        category: product.category.name,
         price: product.price,
-        quantity: item.quantity,
-        subTotal
-      })
+        qty: item.qty,
+        subtotal,
+      });
     }
 
     return {
       items: result,
-      grandTotal
-    }
+      grandTotal,
+    };
   }
 }

@@ -1,110 +1,124 @@
 import { Request, Response, NextFunction } from "express";
-import { ProductService } from "#/modules/product/product.service";
-import { ResponseUtil } from "#/utils/response";
+import { ProductService } from "./product.service";
 
 export class ProductController {
-  private productService: ProductService;
+  private service: ProductService;
 
   constructor() {
-    this.productService = new ProductService();
+    this.service = new ProductService();
   }
 
+  // ✅ GET ALL
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const filters = {
-        page: req.query["page"]
-          ? parseInt(req.query["page"] as string)
-          : undefined,
-        limit: req.query["limit"]
-          ? parseInt(req.query["limit"] as string)
-          : undefined,
-        search: req.query["search"] as string | undefined,
-        categoryId: req.query["categoryId"] as string | undefined,
-      };
-      const products = await this.productService.getAllProducts(filters);
-      return ResponseUtil.success(res, "Produk berhasil diambil", products);
-    } catch (error) {
-      return next(error);
+      const result = await this.service.getAllProducts(req.query as any);
+
+      res.json({
+        success: true,
+        message: "Berhasil mengambil data produk",
+        ...result,
+      });
+    } catch (err) {
+      next(err);
     }
   };
 
+  // ✅ GET BY ID
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const product = await this.productService.getProductById(
-        req.params["id"] as string,
-      );
-      return ResponseUtil.success(res, "Produk berhasil diambil", product);
-    } catch (error) {
-      return next(error);
+      const { id } = req.params as { id: string };
+
+      const product = await this.service.getProductById(id);
+
+      res.json({
+        success: true,
+        message: "Produk ditemukan",
+        data: product,
+      });
+    } catch (err) {
+      next(err);
     }
   };
 
-  getBySerialNumber = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  // ✅ GET BY CODE (barcode / internal)
+  getByCode = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const product = await this.productService.getProductBySerialNumber(
-        req.params["serialNumber"] as string,
-      );
-      return ResponseUtil.success(res, "Produk berhasil ditemukan", product);
-    } catch (error) {
-      return next(error);
+      const { code } = req.params as { code: string };
+
+      const product = await this.service.getProductByCode(code);
+
+      res.json({
+        success: true,
+        message: "Produk ditemukan",
+        data: product,
+      });
+    } catch (err) {
+      next(err);
     }
   };
 
+  // ✅ CREATE
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const product = await this.productService.createProduct(
-        req.body as {
-          name: string;
-          serialNumber: string;
-          price: number;
-          categoryId: string;
-        },
-      );
-      return ResponseUtil.created(res, "Produk berhasil ditambahkan", product);
-    } catch (error) {
-      return next(error);
+      const product = await this.service.createProduct(req.body);
+
+      res.status(201).json({
+        success: true,
+        message: "Produk berhasil dibuat",
+        data: product,
+      });
+    } catch (err) {
+      next(err);
     }
   };
 
+  // ✅ UPDATE
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const product = await this.productService.updateProduct(
-        req.params["id"] as string,
-        req.body as {
-          name?: string;
-          serialNumber?: string;
-          price?: number;
-          categoryId?: string;
-        },
-      );
-      return ResponseUtil.success(res, "Produk berhasil diupdate", product);
-    } catch (error) {
-      return next(error);
+      const { id } = req.params as { id: string };
+
+      const product = await this.service.updateProduct(id, req.body);
+
+      res.json({
+        success: true,
+        message: "Produk berhasil diupdate",
+        data: product,
+      });
+    } catch (err) {
+      next(err);
     }
   };
 
+  // ✅ DELETE
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.productService.deleteProduct(req.params["id"] as string);
-      return ResponseUtil.success(res, "Produk berhasil dihapus");
-    } catch (error) {
-      return next(error);
+      const { id } = req.params as { id: string };
+
+      await this.service.deleteProduct(id);
+
+      res.json({
+        success: true,
+        message: "Produk berhasil dihapus",
+      });
+    } catch (err) {
+      next(err);
     }
   };
 
+  // 🔥 FITUR KASIR
   calculate = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { items } = req.body as {
-        items: Array<{ serialNumber: string; qty: number }>;
-      };
-      const result = await this.productService.calculateTotal(items);
-      return ResponseUtil.success(res, "Total harga berhasil dihitung", result);
-    } catch (error) {
-      return next(error);
+      const { items } = req.body;
+
+      const result = await this.service.calculateTotal(items);
+
+      res.json({
+        success: true,
+        message: "Perhitungan berhasil",
+        data: result,
+      });
+    } catch (err) {
+      next(err);
     }
   };
 }

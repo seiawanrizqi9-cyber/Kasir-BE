@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { CategoryController } from "#/modules/category/category.controller";
+import { CategoryController } from "./category.controller";
 import { validate } from "#/middlewares/validation.middleware";
 import {
   createCategorySchema,
   updateCategorySchema,
   getCategorySchema,
-} from "#/modules/category/category.validator";
+} from "./category.validator";
 
 const router = Router();
-const categoryController = new CategoryController();
+const controller = new CategoryController();
 
 /**
  * @swagger
@@ -25,20 +25,9 @@ const categoryController = new CategoryController();
  *     summary: Ambil semua kategori
  *     responses:
  *       200:
- *         description: Daftar kategori
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: { type: boolean }
- *                 message: { type: string }
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Category'
+ *         description: Berhasil mengambil kategori
  */
-router.get("/", categoryController.getAll);
+router.get("/", controller.getAll);
 
 /**
  * @swagger
@@ -53,42 +42,29 @@ router.get("/", categoryController.getAll);
  *         schema:
  *           type: string
  *           format: uuid
- *     responses:
- *       200:
- *         description: Detail kategori
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SuccessResponse'
- *       404:
- *         description: Kategori tidak ditemukan
  */
-router.get("/:id", validate(getCategorySchema), categoryController.getById);
+router.get("/:id", validate(getCategorySchema), controller.getById);
 
 /**
  * @swagger
  * /api/categories:
  *   post:
  *     tags: [Categories]
- *     summary: Tambah kategori baru
+ *     summary: Tambah kategori
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - name
+ *             required: [name]
  *             properties:
  *               name:
  *                 type: string
  *               description:
  *                 type: string
- *     responses:
- *       201:
- *         description: Kategori berhasil ditambahkan
  */
-router.post("/", validate(createCategorySchema), categoryController.create);
+router.post("/", validate(createCategorySchema), controller.create);
 
 /**
  * @swagger
@@ -96,28 +72,8 @@ router.post("/", validate(createCategorySchema), categoryController.create);
  *   put:
  *     tags: [Categories]
  *     summary: Update kategori
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *     responses:
- *       200:
- *         description: Kategori berhasil diupdate
  */
-router.put("/:id", validate(updateCategorySchema), categoryController.update);
+router.put("/:id", validate(updateCategorySchema), controller.update);
 
 /**
  * @swagger
@@ -125,17 +81,7 @@ router.put("/:id", validate(updateCategorySchema), categoryController.update);
  *   delete:
  *     tags: [Categories]
  *     summary: Hapus kategori
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     responses:
- *       200:
- *         description: Kategori berhasil dihapus
  */
-router.delete("/:id", validate(getCategorySchema), categoryController.delete);
+router.delete("/:id", validate(getCategorySchema), controller.delete);
 
 export default router;

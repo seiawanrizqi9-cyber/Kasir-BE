@@ -1,67 +1,81 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { CategoryService } from "#/modules/category/category.service";
-import { ResponseUtil } from "#/utils/response";
 
 export class CategoryController {
-  private categoryService: CategoryService;
+  private service = new CategoryService();
 
-  constructor() {
-    this.categoryService = new CategoryService();
-  }
+  getAll = async (_req: Request, res: Response) => {
+    const categories = await this.service.getAllCategories();
 
-  getAll = async (_req: Request, res: Response, next: NextFunction) => {
-    try {
-      const categories = await this.categoryService.getAllCategories();
-      return ResponseUtil.success(res, "Kategori berhasil diambil", categories);
-    } catch (error) {
-      return next(error);
-    }
+    res.json({
+      success: true,
+      message: "Daftar kategori",
+      data: categories,
+    });
   };
 
-  getById = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const category = await this.categoryService.getCategoryById(
-        req.params["id"] as string,
-      );
-      return ResponseUtil.success(res, "Kategori berhasil diambil", category);
-    } catch (error) {
-      return next(error);
+  getById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    if (typeof id !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "ID kategori tidak valid",
+      });
     }
+
+    const category = await this.service.getCategoryById(id);
+
+    res.json({
+      success: true,
+      message: "Kategori ditemukan",
+      data: category,
+    });
   };
 
-  create = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const category = await this.categoryService.createCategory(
-        req.body as { name: string; description?: string },
-      );
-      return ResponseUtil.created(
-        res,
-        "Kategori berhasil ditambahkan",
-        category,
-      );
-    } catch (error) {
-      return next(error);
-    }
+  create = async (req: Request, res: Response) => {
+    const category = await this.service.createCategory(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Kategori berhasil dibuat",
+      data: category,
+    });
   };
 
-  update = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const category = await this.categoryService.updateCategory(
-        req.params["id"] as string,
-        req.body as { name?: string; description?: string },
-      );
-      return ResponseUtil.success(res, "Kategori berhasil diupdate", category);
-    } catch (error) {
-      return next(error);
+  update = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (typeof id !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "ID kategori tidak valid",
+      });
     }
+
+    const category = await this.service.updateCategory(id, req.body);
+
+    res.json({
+      success: true,
+      message: "Kategori berhasil diupdate",
+      data: category,
+    });
   };
 
-  delete = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      await this.categoryService.deleteCategory(req.params["id"] as string);
-      return ResponseUtil.success(res, "Kategori berhasil dihapus");
-    } catch (error) {
-      return next(error);
+  delete = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (typeof id !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "ID kategori tidak valid",
+      });
     }
+
+    await this.service.deleteCategory(id);
+
+    res.json({
+      success: true,
+      message: "Kategori berhasil dihapus",
+    });
   };
 }

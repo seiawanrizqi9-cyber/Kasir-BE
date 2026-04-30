@@ -1,17 +1,17 @@
 import { Router } from "express";
-import { ProductController } from "#/modules/product/product.controller";
+import { ProductController } from "./product.controller";
 import { validate } from "#/middlewares/validation.middleware";
 import {
   createProductSchema,
   updateProductSchema,
   getProductSchema,
-  getBySerialSchema,
+  getByCodeSchema,
   listProductsSchema,
   calculateSchema,
-} from "#/modules/product/product.validator";
+} from "./product.validator";
 
 const router = Router();
-const productController = new ProductController();
+const controller = new ProductController();
 
 /**
  * @swagger
@@ -25,107 +25,24 @@ const productController = new ProductController();
  * /api/products:
  *   get:
  *     tags: [Products]
- *     summary: Ambil semua produk (dengan pagination & pencarian)
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *       - in: query
- *         name: categoryId
- *         schema:
- *           type: string
- *           format: uuid
- *     responses:
- *       200:
- *         description: Daftar produk berhasil diambil
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: { type: boolean }
- *                 message: { type: string }
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Product'
+ *     summary: Ambil semua produk
  */
-router.get("/", validate(listProductsSchema), productController.getAll);
+router.get("/", validate(listProductsSchema), controller.getAll);
 
 /**
  * @swagger
- * /api/products/calculate:
- *   post:
- *     tags: [Products]
- *     summary: Hitung total harga otomatis dari daftar nomor seri
- *     description: Kirim daftar nomor seri beserta jumlahnya, API akan mengembalikan detail harga dan grand total secara otomatis.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - items
- *             properties:
- *               items:
- *                 type: array
- *                 items:
- *                   type: object
- *                   required:
- *                     - serialNumber
- *                     - qty
- *                   properties:
- *                     serialNumber:
- *                       type: string
- *                     qty:
- *                       type: integer
- *                       minimum: 1
- *     responses:
- *       200:
- *         description: Hasil perhitungan total harga
- */
-router.post(
-  "/calculate",
-  validate(calculateSchema),
-  productController.calculate,
-);
-
-/**
- * @swagger
- * /api/products/serial/{serialNumber}:
+ * /api/products/code/{code}:
  *   get:
  *     tags: [Products]
- *     summary: Ambil produk berdasarkan nomor seri
+ *     summary: Ambil produk berdasarkan code (barcode / internal)
  *     parameters:
  *       - in: path
- *         name: serialNumber
+ *         name: code
  *         required: true
  *         schema:
  *           type: string
- *         description: Nomor seri unik produk
- *     responses:
- *       200:
- *         description: Detail produk ditemukan
- *       404:
- *         description: Produk tidak ditemukan
  */
-router.get(
-  "/serial/:serialNumber",
-  validate(getBySerialSchema),
-  productController.getBySerialNumber,
-);
+router.get("/code/:code", validate(getByCodeSchema), controller.getByCode);
 
 /**
  * @swagger
@@ -133,53 +50,37 @@ router.get(
  *   get:
  *     tags: [Products]
  *     summary: Ambil produk berdasarkan ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     responses:
- *       200:
- *         description: Detail produk
- *       404:
- *         description: Produk tidak ditemukan
  */
-router.get("/:id", validate(getProductSchema), productController.getById);
+router.get("/:id", validate(getProductSchema), controller.getById);
 
 /**
  * @swagger
  * /api/products:
  *   post:
  *     tags: [Products]
- *     summary: Tambah produk baru
+ *     summary: Tambah produk
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - name
- *               - serialNumber
- *               - price
- *               - categoryId
+ *             required: [name, code, codeType, price, categoryId]
  *             properties:
  *               name:
  *                 type: string
- *               serialNumber:
+ *               code:
  *                 type: string
+ *               codeType:
+ *                 type: string
+ *                 enum: [INTERNAL, BARCODE]
  *               price:
  *                 type: number
  *               categoryId:
  *                 type: string
  *                 format: uuid
- *     responses:
- *       201:
- *         description: Produk berhasil ditambahkan
  */
-router.post("/", validate(createProductSchema), productController.create);
+router.post("/", validate(createProductSchema), controller.create);
 
 /**
  * @swagger
@@ -187,33 +88,8 @@ router.post("/", validate(createProductSchema), productController.create);
  *   put:
  *     tags: [Products]
  *     summary: Update produk
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               serialNumber:
- *                 type: string
- *               price:
- *                 type: number
- *               categoryId:
- *                 type: string
- *                 format: uuid
- *     responses:
- *       200:
- *         description: Produk berhasil diupdate
  */
-router.put("/:id", validate(updateProductSchema), productController.update);
+router.put("/:id", validate(updateProductSchema), controller.update);
 
 /**
  * @swagger
@@ -221,17 +97,39 @@ router.put("/:id", validate(updateProductSchema), productController.update);
  *   delete:
  *     tags: [Products]
  *     summary: Hapus produk
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
+ */
+router.delete("/:id", validate(getProductSchema), controller.delete);
+
+/**
+ * 🔥 FITUR UTAMA KASIR
+ */
+/**
+ * @swagger
+ * /api/products/calculate:
+ *   post:
+ *     tags: [Products]
+ *     summary: Hitung total belanja dari scan barcode
+ *     description: Input daftar code + qty → auto hitung total
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     code:
+ *                       type: string
+ *                     qty:
+ *                       type: number
  *     responses:
  *       200:
- *         description: Produk berhasil dihapus
+ *         description: Hasil perhitungan total belanja
  */
-router.delete("/:id", validate(getProductSchema), productController.delete);
+router.post("/calculate", validate(calculateSchema), controller.calculate);
 
 export default router;
