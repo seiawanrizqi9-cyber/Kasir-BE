@@ -1,157 +1,79 @@
-import {
-  ProductRepository,
-  ProductFilters,
-} from "#/modules/product/product.repository";
-import { CategoryRepository } from "#/modules/category/category.repository";
-import { ErrorHandler } from "#/middlewares/error.middleware";
+import { ErrorHandler } from "#middlewares/error.middleware";
+import { ProductRepository } from "./product.repository";
+import { CategoryRepository } from "../category/category.repository";
+import { CodeType } from "@prisma/client";
 
 export class ProductService {
-  private productRepository: ProductRepository;
-  private categoryRepository: CategoryRepository;
+  private productRepository = new ProductRepository();
+  private categoryRepository = new CategoryRepository();
 
-  constructor() {
-    this.productRepository = new ProductRepository();
-    this.categoryRepository = new CategoryRepository();
-  }
+  async getProductByCode(code: string) {
+    const product = await this.productRepository.findByCode(code);
 
-  async getAllProducts(filters: ProductFilters) {
-    return this.productRepository.findAll(filters);
-  }
-
-  async getProductById(id: string) {
-    const product = await this.productRepository.findById(id);
-    if (!product) {
-      throw new ErrorHandler("Produk tidak ditemukan", 404);
-    }
-    return product;
-  }
-
-  async getProductBySerialNumber(serialNumber: string) {
-    const product =
-      await this.productRepository.findBySerialNumber(serialNumber);
     if (!product) {
       throw new ErrorHandler(
-        `Produk dengan nomor seri "${serialNumber}" tidak ditemukan`,
+        `Product dengan kode "${code}" tidak ditemukan`,
         404,
+        "NOT_FOUND"
       );
     }
+
     return product;
   }
 
   async createProduct(data: {
     name: string;
-    serialNumber: string;
-    price: number;
+    code: string;
+    codeType: CodeType;
     categoryId: string;
+    price: number;
   }) {
-    // Validasi kategori ada
-    const category = await this.categoryRepository.findById(data.categoryId);
+    
+    const category = await this.categoryRepository.findById(data.categoryId)
     if (!category) {
-      throw new ErrorHandler("Kategori tidak ditemukan", 404);
+      throw new ErrorHandler("Kategori tidak ditemukan", 404, "NOT_FOUND")
     }
 
-    // Cek duplikasi nomor seri
-    const existing = await this.productRepository.findBySerialNumber(
-      data.serialNumber,
-    );
+    const existing = await this.productRepository.findByCode(data.code)
     if (existing) {
-      throw new ErrorHandler("Nomor seri sudah digunakan produk lain", 400);
+      throw new ErrorHandler(`Produk dengan kode ${data.code} sudah ada`, 400, "BAD_REQUEST")
     }
 
-    return this.productRepository.create(data);
+    return this.productRepository.create(data)
   }
 
-  async updateProduct(
-    id: string,
-    data: {
-      name?: string;
-      serialNumber?: string;
-      price?: number;
-      categoryId?: string;
-    },
-  ) {
-    const product = await this.productRepository.findById(id);
-    if (!product) {
-      throw new ErrorHandler("Produk tidak ditemukan", 404);
-    }
-
-    if (data.categoryId) {
-      const category = await this.categoryRepository.findById(data.categoryId);
-      if (!category) {
-        throw new ErrorHandler("Kategori tidak ditemukan", 404);
-      }
-    }
-
-    if (data.serialNumber && data.serialNumber !== product.serialNumber) {
-      const existing = await this.productRepository.findBySerialNumber(
-        data.serialNumber,
-      );
-      if (existing) {
-        throw new ErrorHandler("Nomor seri sudah digunakan produk lain", 400);
-      }
-    }
-
-    return this.productRepository.update(id, data);
-  }
-
-  async deleteProduct(id: string) {
-    const product = await this.productRepository.findById(id);
-    if (!product) {
-      throw new ErrorHandler("Produk tidak ditemukan", 404);
-    }
-    return this.productRepository.delete(id);
-  }
-
-  /**
-   * Hitung total harga dari daftar nomor seri + jumlah masing-masing.
-   * Mengembalikan detail tiap item dan grand total.
-   */
   async calculateTotal(
-    items: Array<{ serialNumber: string; qty: number }>,
-  ): Promise<{
-    items: Array<{
-      serialNumber: string;
-      name: string;
-      category: string;
-      price: number;
-      qty: number;
-      subtotal: number;
-    }>;
-    grandTotal: number;
-  }> {
-    const result = [];
+    items: Array<{code: string, quantity: number}>
+  ) {
+    const result = []
     let grandTotal = 0;
 
     for (const item of items) {
-      const product = await this.productRepository.findBySerialNumber(
-        item.serialNumber,
-      );
-      if (!product) {
-        throw new ErrorHandler(
-          `Produk dengan nomor seri "${item.serialNumber}" tidak ditemukan`,
-          404,
-        );
-      }
-      if (item.qty < 1) {
-        throw new ErrorHandler(
-          `Jumlah untuk "${item.serialNumber}" harus minimal 1`,
-          400,
-        );
+      const product = await this.productRepository.findByCode(item.code)
+
+      if(!product) {
+        throw new ErrorHandler(`Produk dengan kode ${item.code} tidak ditemukan`, 404, "NOT_FOUND")
       }
 
-      const subtotal = product.price * item.qty;
-      grandTotal += subtotal;
+      if (item.quantity < 1) {
+        throw new ErrorHandler(`Jumlah quantity untuk produk ${item.code} minimal 1`, 400, "BAD_REQUEST")
+      }
+
+      const subTotal = product.price * item.quantity
+      grandTotal += subTotal
 
       result.push({
-        serialNumber: product.serialNumber,
+        code: product.code,
         name: product.name,
-        category: product.category.name,
         price: product.price,
-        qty: item.qty,
-        subtotal,
-      });
+        quantity: item.quantity,
+        subTotal
+      })
     }
 
-    return { items: result, grandTotal };
+    return {
+      items: result,
+      grandTotal
+    }
   }
 }

@@ -1,9 +1,7 @@
-import { prisma } from "#/config/database";
-import { Prisma } from "@prisma/client";
+import { CodeType, Prisma } from "@prisma/client";
+import { prisma } from "../../config/database";
 
 export interface ProductFilters {
-  page?: number;
-  limit?: number;
   search?: string;
   categoryId?: string;
 }
@@ -13,85 +11,69 @@ const productWithCategory = Prisma.validator<Prisma.ProductInclude>()({
 });
 
 export class ProductRepository {
-  async findAll(filters: ProductFilters) {
-    const { page = 1, limit = 10, search, categoryId } = filters;
-    const skip = (page - 1) * limit;
-
-    const where: Prisma.ProductWhereInput = {
-      ...(categoryId && { categoryId }),
-      ...(search && {
-        OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { serialNumber: { contains: search, mode: "insensitive" } },
-        ],
-      }),
-    };
-
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        skip,
-        take: limit,
-        include: productWithCategory,
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.product.count({ where }),
-    ]);
-
-    return {
-      data: products,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
-
   async findById(id: string) {
-    return prisma.product.findUnique({
-      where: { id },
-      include: productWithCategory,
-    });
+      return prisma.product.findUnique({
+        where: { id },
+        include: productWithCategory,
+      });
   }
 
-  async findBySerialNumber(serialNumber: string) {
+  async findByCode(code: string) {
     return prisma.product.findUnique({
-      where: { serialNumber },
+      where: { code },
       include: productWithCategory,
+    })
+  }
+
+  async findAll(filters: ProductFilters) {
+    const where: Prisma.ProductWhereInput = {
+      ...(filters.categoryId && {categoryId: filters.categoryId}),
+      ...(filters.search && {
+        OR: [
+          { name: { contains: filters.search, mode: "insensitive" } },
+          { code: { contains: filters.search, mode: "insensitive" } },
+        ],
+      })
+    }
+
+    return prisma.product.findMany({
+      where,
+      include: productWithCategory,
+      orderBy: { createdAt: "desc" },
     });
   }
 
   async create(data: {
     name: string;
-    serialNumber: string;
+    code: string;
+    codeType: CodeType;
     price: number;
     categoryId: string;
   }) {
     return prisma.product.create({
       data,
       include: productWithCategory,
-    });
+    })
   }
 
-  async update(
-    id: string,
-    data: {
-      name?: string;
-      serialNumber?: string;
-      price?: number;
-      categoryId?: string;
-    },
-  ) {
-    return prisma.product.update({
-      where: { id },
-      data,
-      include: productWithCategory,
-    });
-  }
+  async update(id: string, data: {
+    name?: string;
+    code?: string;
+    codeType?: CodeType
+    price?: number
+    categoryId?: string
+  },
+) {
+  return prisma.product.update({
+    where: { id },
+    data,
+    include: productWithCategory,
+  })
+}
 
-  async delete(id: string) {
-    return prisma.product.delete({ where: { id } });
-  }
+async delete(id: string) {
+  return prisma.product.delete({
+    where: { id },
+  })
+}
 }

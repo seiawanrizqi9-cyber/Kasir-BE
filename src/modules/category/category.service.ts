@@ -2,11 +2,7 @@ import { CategoryRepository } from "#/modules/category/category.repository";
 import { ErrorHandler } from "#/middlewares/error.middleware";
 
 export class CategoryService {
-  private categoryRepository: CategoryRepository;
-
-  constructor() {
-    this.categoryRepository = new CategoryRepository();
-  }
+  private categoryRepository = new CategoryRepository();
 
   async getAllCategories() {
     return this.categoryRepository.findAll();
@@ -14,17 +10,19 @@ export class CategoryService {
 
   async getCategoryById(id: string) {
     const category = await this.categoryRepository.findById(id);
+
     if (!category) {
-      throw new ErrorHandler("Category not found", 404);
+      throw new ErrorHandler("Kategori tidak ditemukan", 404);
     }
+
     return category;
   }
 
   async createCategory(data: { name: string; description?: string }) {
-    // Check if category name already exists
     const existing = await this.categoryRepository.findByName(data.name);
+
     if (existing) {
-      throw new ErrorHandler("Category name already exists", 400);
+      throw new ErrorHandler("Nama kategori sudah digunakan", 400);
     }
 
     return this.categoryRepository.create(data);
@@ -34,17 +32,17 @@ export class CategoryService {
     id: string,
     data: { name?: string; description?: string },
   ) {
-    // Check if category exists
     const category = await this.categoryRepository.findById(id);
+
     if (!category) {
-      throw new ErrorHandler("Category not found", 404);
+      throw new ErrorHandler("Kategori tidak ditemukan", 404);
     }
 
-    // If updating name, check if it's already taken by another category
     if (data.name && data.name !== category.name) {
       const existing = await this.categoryRepository.findByName(data.name);
+
       if (existing) {
-        throw new ErrorHandler("Category name already exists", 400);
+        throw new ErrorHandler("Nama kategori sudah digunakan", 400);
       }
     }
 
@@ -53,21 +51,15 @@ export class CategoryService {
 
   async deleteCategory(id: string) {
     const category = await this.categoryRepository.findById(id);
+
     if (!category) {
-      throw new ErrorHandler("Category not found", 404);
+      throw new ErrorHandler("Kategori tidak ditemukan", 404);
     }
 
-    // Check if category has products
-    const categoryWithCount = (await this.categoryRepository.findById(
-      id,
-    )) as any;
-    if (
-      categoryWithCount &&
-      categoryWithCount._count &&
-      categoryWithCount._count.products > 0
-    ) {
+    // 🔥 proteksi penting
+    if ((category as any)._count?.products > 0) {
       throw new ErrorHandler(
-        "Cannot delete category with associated products",
+        "Tidak bisa menghapus kategori yang masih memiliki produk",
         400,
       );
     }
