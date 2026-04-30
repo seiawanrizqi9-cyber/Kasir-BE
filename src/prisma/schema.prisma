@@ -9,30 +9,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Store {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categories Category[]
+  products   Product[]
+
+  @@map("stores")
+}
+
 model Category {
   id          String    @id @default(uuid())
-  name        String    @unique
+  name        String
   description String?
+  storeId     String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  store Store @relation(fields: [storeId], references: [id])
   products Product[]
 
+  @@unique([name, storeId])
   @@map("categories")
 }
 
 model Product {
-  id           String    @id @default(uuid())
-  name         String    @unique
-  code         String    @unique
-  codeType     CodeType
-  price        Int
-  categoryId   String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id         String   @id @default(uuid())
+  name       String
+  code       String
+  codeType   CodeType
+  price      Int
+  categoryId String
+  storeId    String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   category Category @relation(fields: [categoryId], references: [id])
+  store    Store    @relation(fields: [storeId], references: [id])
 
+  @@unique([code, storeId])
   @@index([code])
   @@map("products")
 }
