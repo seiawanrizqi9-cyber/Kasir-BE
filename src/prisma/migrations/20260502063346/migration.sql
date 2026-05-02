@@ -2,15 +2,28 @@
 CREATE TYPE "CodeType" AS ENUM ('INTERNAL', 'BARCODE');
 
 -- CreateTable
-CREATE TABLE "stores" (
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "googleId" TEXT,
+    "storeId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Store" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "joinCode" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "stores_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Store_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -64,7 +77,16 @@ CREATE TABLE "transaction_items" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "stores_email_key" ON "stores"("email");
+CREATE UNIQUE INDEX "User_googleId_key" ON "User"("googleId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_storeId_key" ON "User"("email", "storeId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Store_email_key" ON "Store"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Store_joinCode_key" ON "Store"("joinCode");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "categories_name_storeId_key" ON "categories"("name", "storeId");
@@ -76,16 +98,19 @@ CREATE INDEX "products_code_idx" ON "products"("code");
 CREATE UNIQUE INDEX "products_code_storeId_key" ON "products"("code", "storeId");
 
 -- AddForeignKey
-ALTER TABLE "categories" ADD CONSTRAINT "categories_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "stores"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "categories" ADD CONSTRAINT "categories_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "products" ADD CONSTRAINT "products_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "stores"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "products" ADD CONSTRAINT "products_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "transactions" ADD CONSTRAINT "transactions_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "stores"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "transaction_items" ADD CONSTRAINT "transaction_items_transactionId_fkey" FOREIGN KEY ("transactionId") REFERENCES "transactions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
