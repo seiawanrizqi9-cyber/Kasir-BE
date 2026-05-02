@@ -1,122 +1,66 @@
 import { Request, Response, NextFunction } from "express";
 import { ProductService } from "./product.service";
+import { ResponseUtil } from "#/utils/response";
+import { ErrorHandler } from "#middlewares/error.middleware";
 
 export class ProductController {
-  private service: ProductService;
+  private service = new ProductService();
 
-  constructor() {
-    this.service = new ProductService();
-  }
-
-  // ✅ GET ALL
-  getAll = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await this.service.getAllProducts(req.query as any);
-
-      res.json({
-        success: true,
-        message: "Berhasil mengambil data produk",
-        ...result,
-      });
-    } catch (err) {
-      next(err);
-    }
-  };
-
-  // ✅ GET BY ID
-  getById = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params as { id: string };
-
-      const product = await this.service.getProductById(id);
-
-      res.json({
-        success: true,
-        message: "Produk ditemukan",
-        data: product,
-      });
-    } catch (err) {
-      next(err);
-    }
-  };
-
-  // ✅ GET BY CODE (barcode / internal)
-  getByCode = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { code } = req.params as { code: string };
-
-      const product = await this.service.getProductByCode(code);
-
-      res.json({
-        success: true,
-        message: "Produk ditemukan",
-        data: product,
-      });
-    } catch (err) {
-      next(err);
-    }
-  };
-
-  // ✅ CREATE
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const product = await this.service.createProduct(req.body);
+      const storeId = req.user.id;
 
-      res.status(201).json({
-        success: true,
-        message: "Produk berhasil dibuat",
-        data: product,
+      const result = await this.service.create({
+        ...req.body,
+        storeId,
       });
+
+      ResponseUtil.success(res, "Product created", result);
     } catch (err) {
       next(err);
     }
   };
 
-  // ✅ UPDATE
-  update = async (req: Request, res: Response, next: NextFunction) => {
+  /**
+   * 🔥 endpoint scan barcode
+   */
+  findByCode = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params as { id: string };
+      const { code } = req.params;
+      const storeId = req.user.id;
+      if (typeof code !== "string") throw new ErrorHandler("Invalid Code", 400);
 
-      const product = await this.service.updateProduct(id, req.body);
+      const result = await this.service.findByCode(code, storeId);
 
-      res.json({
-        success: true,
-        message: "Produk berhasil diupdate",
-        data: product,
-      });
+      ResponseUtil.success(res, "Product found", result);
     } catch (err) {
       next(err);
     }
   };
 
-  // ✅ DELETE
+  /**
+   * 🔍 search by name
+   */
+  search = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name } = req.query;
+      const storeId = req.user.id;
+
+      const result = await this.service.searchByName(String(name), storeId);
+
+      ResponseUtil.success(res, "Products fetched", result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params as { id: string };
+      const { id } = req.params;
+      if (typeof id !== "string") throw new ErrorHandler("Invalid ID", 400);
 
-      await this.service.deleteProduct(id);
-
-      res.json({
-        success: true,
-        message: "Produk berhasil dihapus",
-      });
-    } catch (err) {
-      next(err);
-    }
-  };
-
-  // 🔥 FITUR KASIR
-  calculate = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { items } = req.body;
-
-      const result = await this.service.calculateTotal(items);
-
-      res.json({
-        success: true,
-        message: "Perhitungan berhasil",
-        data: result,
-      });
+      await this.service.delete(id);
+      ResponseUtil.success(res, "Product deleted");
     } catch (err) {
       next(err);
     }

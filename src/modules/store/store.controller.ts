@@ -1,32 +1,26 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { StoreService } from "./store.service";
+import { ResponseUtil } from "#/utils/response";
 
 export class StoreController {
-  private service: StoreService;
+  private service = new StoreService();
 
-  constructor() {
-    this.service = new StoreService();
-  }
-
-  register = async (req: Request, res: Response) => {
-    const result = await this.service.register(req.body);
-
-    res.status(201).json({
-      success: true,
-      message: "Store berhasil dibuat",
-      data: result,
-    });
+  register = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.service.register(req.body);
+      ResponseUtil.success(res, "Store registered", result);
+    } catch (err) {
+      next(err);
+    }
   };
 
-  login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-
-    const result = await this.service.login(email, password);
-
-    res.json({
-      success: true,
-      message: "Login berhasil",
-      data: result,
-    });
+  getProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const storeId = req.user.id; // nanti dari middleware auth
+      const result = await this.service.getById(storeId);
+      ResponseUtil.success(res, "Store fetched", result);
+    } catch (err) {
+      next(err);
+    }
   };
 }
