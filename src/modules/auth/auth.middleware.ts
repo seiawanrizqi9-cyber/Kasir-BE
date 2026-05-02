@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { ResponseUtil } from "#/utils/response";
 
-interface JwtPayload {
-  id: string;
+interface JwtUserPayload {
+  userId: string;
+  storeId: string | null;
 }
 
 export const authMiddleware = (
@@ -24,15 +25,21 @@ export const authMiddleware = (
       return ResponseUtil.unauthorized(res, "Invalid token format");
     }
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string,
-    ) as JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
 
-    req.user = { id: decoded.id };
+    if (typeof decoded === "string") {
+      return ResponseUtil.unauthorized(res, "Invalid token");
+    }
+
+    const payload = decoded as JwtUserPayload;
+
+    req.user = {
+      userId: payload.userId,
+      storeId: payload.storeId,
+    };
 
     next();
-  } catch (err) {
+  } catch {
     return ResponseUtil.unauthorized(res, "Invalid or expired token");
   }
 };

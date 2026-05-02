@@ -34,6 +34,13 @@ export class StoreService {
     return { token };
   }
 
+  async getJoinCode(storeId: string) {
+  const store = await this.repo.findById(storeId);
+  if (!store) throw new ErrorHandler("Store not found", 404);
+
+  return { joinCode: store.joinCode };
+}
+
   async getById(id: string) {
     const store = await this.repo.findById(id);
     if (!store) throw new ErrorHandler("Store not found", 404);

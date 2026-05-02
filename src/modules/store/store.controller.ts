@@ -23,9 +23,24 @@ export class StoreController {
     }
   };
 
+  getJoinCode = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const storeId = req.user.storeId;
+      if (!storeId) throw new Error("User not in store");
+
+      const result = await this.service.getJoinCode(storeId);
+
+      ResponseUtil.success(res, "Join code fetched", result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
   getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const storeId = req.user.id; // nanti dari middleware auth
+      const storeId = req.user.storeId;
+      if (!storeId) throw new Error("User not in store");
+
       const result = await this.service.getById(storeId);
       ResponseUtil.success(res, "Store fetched", result);
     } catch (err) {
