@@ -19,6 +19,7 @@ model Store {
 
   categories Category[]
   products   Product[]
+  transactions Transaction[]
 
   @@map("stores")
 }
@@ -49,8 +50,9 @@ model Product {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  category Category @relation(fields: [categoryId], references: [id])
-  store    Store    @relation(fields: [storeId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
+  store       Store    @relation(fields: [storeId], references: [id])
+  transaction TransactionItem[]
 
   @@unique([code, storeId])
   @@index([code])
@@ -60,4 +62,31 @@ model Product {
 enum CodeType {
   INTERNAL
   BARCODE
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  storeId   String
+  total     Int
+  createdAt DateTime @default(now())
+
+  store Store @relation(fields: [storeId], references: [id])
+  items TransactionItem[]
+
+  @@map("transactions")
+}
+
+model TransactionItem {
+  id            String @id @default(uuid())
+  transactionId String
+  productId     String
+  name          String
+  price         Int
+  qty           Int
+  subtotal      Int
+
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  product     Product     @relation(fields: [productId], references: [id])
+
+  @@map("transaction_items")
 }

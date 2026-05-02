@@ -1,57 +1,22 @@
 import { prisma } from "#/config/database";
-import { Category } from "@prisma/client";
 
 export class CategoryRepository {
-  async findAll(): Promise<Category[]> {
+  create(data: { name: string; description?: string; storeId: string }) {
+    return prisma.category.create({ data });
+  }
+
+  findAllByStore(storeId: string) {
     return prisma.category.findMany({
-      orderBy: { name: "asc" },
-      include: {
-        _count: {
-          select: { products: true },
-        },
-      },
+      where: { storeId },
+      orderBy: { createdAt: "desc" },
     });
   }
 
-  async findById(id: string): Promise<Category | null> {
-    return prisma.category.findUnique({
-      where: { id },
-      include: {
-        _count: {
-          select: { products: true },
-        },
-      },
-    });
+  findById(id: string) {
+    return prisma.category.findUnique({ where: { id } });
   }
 
-  async findByName(name: string): Promise<Category | null> {
-    return prisma.category.findUnique({
-      where: { name },
-    });
-  }
-
-  async create(data: {
-    name: string;
-    description?: string;
-  }): Promise<Category> {
-    return prisma.category.create({
-      data,
-    });
-  }
-
-  async update(
-    id: string,
-    data: { name?: string; description?: string },
-  ): Promise<Category> {
-    return prisma.category.update({
-      where: { id },
-      data,
-    });
-  }
-
-  async delete(id: string): Promise<Category> {
-    return prisma.category.delete({
-      where: { id },
-    });
+  delete(id: string) {
+    return prisma.category.delete({ where: { id } });
   }
 }
