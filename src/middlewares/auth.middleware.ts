@@ -1,19 +1,38 @@
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { ResponseUtil } from "#/utils/response";
 
-export function authMiddleware(req: any, res: any, next: any) {
-  const token = req.headers.authorization?.split(" ")[1];
+interface JwtPayload {
+  id: string;
+}
 
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
+export const authMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const authHeader = req.headers.authorization;
 
-    req.storeId = (decoded as any).storeId;
+    if (!authHeader) {
+      return ResponseUtil.unauthorized(res, "No token provided");
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+      return ResponseUtil.unauthorized(res, "Invalid token format");
+    }
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string,
+    ) as JwtPayload;
+
+    req.user = { id: decoded.id };
 
     next();
-  } catch {
-    return res.status(401).json({ message: "Invalid token" });
+  } catch (err) {
+    return ResponseUtil.unauthorized(res, "Invalid or expired token");
   }
-}
+};

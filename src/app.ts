@@ -1,48 +1,31 @@
-import express, { Application } from "express";
+import express from "express";
 import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "#/config/swagger";
-import { errorMiddleware } from "#/middlewares/error.middleware";
-
-// Import routes
+import storeRoutes from "#modules/store/store.routes";
 import categoryRoutes from "#/modules/category/category.routes";
 import productRoutes from "#/modules/product/product.routes";
+import transactionRoutes from "#modules/transaction/transaction.routes";
+import { errorMiddleware } from "#/middlewares/error.middleware";
 
-const app: Application = express();
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "#/config/swagger";
 
-// Middlewares
-app.use(cors()); // Enable CORS for all routes
+const app = express();
+
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint
-app.get("/health", (_req, res) => {
-  res.json({ status: "OK", message: "Kasir API is running" });
-});
+// Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// API Documentation
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "Kasir API Documentation",
-  }),
-);
-
-// API Routes
+// Routes
+app.use("/api/stores", storeRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/transactions", transactionRoutes);
 
-// 404 handler
-app.use((_req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route tidak ditemukan",
-  });
-});
-
-// Error handling middleware (must be last)
+// Error handler
 app.use(errorMiddleware);
 
-export default app;
+app.listen(3000, () => {
+  console.log("🚀 Server running on http://localhost:3000");
+});

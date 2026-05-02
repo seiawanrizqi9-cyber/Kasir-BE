@@ -1,14 +1,13 @@
 import { Router } from "express";
-import { CategoryController } from "./category.controller";
+import { TransactionController } from "./transaction.controller";
 import { authMiddleware } from "#/middlewares/auth.middleware";
 
 const router = Router();
-const controller = new CategoryController();
+const controller = new TransactionController();
 
 router.use(authMiddleware);
 
 router.post("/", controller.create);
 router.get("/", controller.getAll);
-router.delete("/:id", controller.delete);
 
 export default router;

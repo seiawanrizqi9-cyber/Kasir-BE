@@ -14,6 +14,15 @@ export class StoreController {
     }
   };
 
+  login = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.service.login(req.body);
+      ResponseUtil.success(res, "Login success", result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
   getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const storeId = req.user.id; // nanti dari middleware auth
