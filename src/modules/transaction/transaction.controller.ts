@@ -26,11 +26,11 @@ export class TransactionController {
   /**
    * 📊 riwayat transaksi
    */
-  getAll = async (req: Request, res: Response, next: NextFunction) => {
+  findAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const storeId = req.user.storeId!;
 
-      const result = await this.service.getAll(storeId);
+      const result = await this.service.findAll(storeId);
 
       ResponseUtil.success(res, "Transactions fetched", result);
     } catch (err) {

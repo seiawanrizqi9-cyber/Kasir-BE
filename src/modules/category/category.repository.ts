@@ -5,6 +5,15 @@ export class CategoryRepository {
     return prisma.category.create({ data });
   }
 
+  findAll(storeId: string) {
+    return prisma.category.findMany({
+      where: { storeId },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
   findAllByStore(storeId: string) {
     return prisma.category.findMany({
       where: { storeId },

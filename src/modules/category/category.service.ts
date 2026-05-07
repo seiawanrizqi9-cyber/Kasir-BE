@@ -8,6 +8,10 @@ export class CategoryService {
     return this.repo.create(data);
   }
 
+  findAll(storeId: string) {
+    return this.repo.findAll(storeId);
+  }
+
   getAll(storeId: string) {
     return this.repo.findAllByStore(storeId);
   }

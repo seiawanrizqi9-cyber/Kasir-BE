@@ -21,6 +21,30 @@ export class CategoryController {
     }
   };
 
+  findAll = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const storeId = req.user.storeId;
+
+    if (!storeId) {
+      throw new ErrorHandler("Store not found", 400);
+    }
+
+    const result = await this.service.findAll(storeId);
+
+    ResponseUtil.success(
+      res,
+      "Categories fetched successfully",
+      result
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const storeId = req.user.storeId;

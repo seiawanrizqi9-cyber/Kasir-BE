@@ -26,11 +26,15 @@ export class TransactionRepository {
     });
   }
 
-  findAllByStore(storeId: string) {
+  findAll(storeId: string) {
     return prisma.transaction.findMany({
       where: { storeId },
-      include: { items: true },
-      orderBy: { createdAt: "desc" },
+      include: {
+        items: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   }
 }

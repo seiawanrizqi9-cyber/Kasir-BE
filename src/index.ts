@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
 import app from "./app";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger";
 
 // Load environment variables
 dotenv.config();
@@ -13,5 +15,7 @@ if (process.env.NODE_ENV !== "production") {
     console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
   });
 }
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 export default app;

@@ -33,7 +33,7 @@ export class TransactionService {
     });
   }
 
-  getAll(storeId: string) {
-    return this.repo.findAllByStore(storeId);
+  findAll(storeId: string) {
+    return this.repo.findAll(storeId);
   }
 }
