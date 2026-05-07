@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { ProductService } from "./product.service";
 import { ResponseUtil } from "#/utils/response";
-import { ErrorHandler } from "#middlewares/error.middleware";
+import { ErrorHandler } from "#/middlewares/error.middleware";
 
 export class ProductController {
   private service = new ProductService();
 
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const storeId = req.user.id;
+      const storeId = req.user.storeId!;
 
       const result = await this.service.create({
         ...req.body,
@@ -27,7 +27,7 @@ export class ProductController {
   findByCode = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { code } = req.params;
-      const storeId = req.user.id;
+      const storeId = req.user.storeId!;
       if (typeof code !== "string") throw new ErrorHandler("Invalid Code", 400);
 
       const result = await this.service.findByCode(code, storeId);
@@ -44,7 +44,7 @@ export class ProductController {
   search = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name } = req.query;
-      const storeId = req.user.id;
+      const storeId = req.user.storeId!;
 
       const result = await this.service.searchByName(String(name), storeId);
 

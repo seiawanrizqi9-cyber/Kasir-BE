@@ -10,7 +10,7 @@ export class TransactionController {
    */
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const storeId = req.user.id;
+      const storeId = req.user.storeId!;
 
       const result = await this.service.create({
         storeId,
@@ -28,7 +28,7 @@ export class TransactionController {
    */
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const storeId = req.user.id;
+      const storeId = req.user.storeId!;
 
       const result = await this.service.getAll(storeId);
 

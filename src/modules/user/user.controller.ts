@@ -20,7 +20,7 @@ export class UserController {
 
   getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const storeId = req.user.storeId;
+      const storeId = req.user.storeId!;
 
       const result = await this.service.getMyStoreUsers(storeId);
 

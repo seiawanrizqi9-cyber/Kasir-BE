@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { CategoryService } from "./category.service";
 import { ResponseUtil } from "#/utils/response";
-import { ErrorHandler } from "#middlewares/error.middleware";
+import { ErrorHandler } from "#/middlewares/error.middleware";
 
 export class CategoryController {
   private service = new CategoryService();
 
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const storeId = req.user.id;
+      const storeId = req.user.storeId;
 
       const result = await this.service.create({
         ...req.body,
@@ -23,12 +23,12 @@ export class CategoryController {
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const storeId = req.user.id;
+      const storeId = req.user.storeId;
 
-      const result = await this.service.getAll(storeId);
+      const result = await this.service.getAll(storeId!);
       ResponseUtil.success(res, "Categories fetched", result);
     } catch (err) {
-      next(err);
+      next(err);  
     }
   };
 

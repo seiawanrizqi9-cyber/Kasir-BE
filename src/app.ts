@@ -1,13 +1,12 @@
 import express from "express";
 import cors from "cors";
-import storeRoutes from "#modules/store/store.routes";
-import categoryRoutes from "#/modules/category/category.routes";
-import productRoutes from "#/modules/product/product.routes";
-import transactionRoutes from "#modules/transaction/transaction.routes";
-import { errorMiddleware } from "#/middlewares/error.middleware";
-
+import storeRoutes from "./modules/store/store.routes";
+import categoryRoutes from "./modules/category/category.routes";
+import productRoutes from "./modules/product/product.routes";
+import transactionRoutes from "./modules/transaction/transaction.routes";
+import { errorMiddleware } from "./middlewares/error.middleware";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "#/config/swagger";
+import { swaggerSpec } from "./config/swagger";
 
 const app = express();
 
